@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+body{
+    margin:0;
+    padding:0;
+    height:100%;
+    font-family: "Inter", sans-serif;
+}
+.container{
+    background-color:#26292E;
+    display:flex;
+    height:100%;
+    min-height: 100vh;
+}
+
+/* Navbar start */
+
+.navbar{
+    width:15%;
+    background-color:#26292E;
+    box-shadow: 0 15px 10px rgba(0, 0, 0, 0.35);
+    position: relative;
+    z-index: 1;
+    padding:20px 0px 10px 30px;
+}
+
+
+.navbar nav{
+    display: block;
+    margin-top:40px;
+}
+
+.navbar nav li{
+    list-style-type: none;
+    padding:10px;
+    font-size: 18px;
+}
+
+.navbar nav a{
+    color:#9A9A9A;
+    text-decoration:none;
+}
+
+.navbar nav a:hover > li{
+    font-size:20px;
+    transition: 0.7s;
+}
+
+
+.navbar nav li{
+    padding:20px;
+}
+
+.navbar nav li i{
+    margin-right:20px;
+}
+
+.logo img{
+    width:150px;
+    margin-left:18px;
+    height:auto;
+}
+
+/* Navbar ends */
+
+.content{
+    width:85%;
+    background-color:#212529;
+}
+
+.header{
+    display:flex;
+    justify-content: space-between;
+    padding:20px 30px 0px 40px;
+}
+
+.header h1{
+    color:#E95D18;
+}  
+
+.userIcon{
+    margin-top:10px;
+    height:25px;
+    border-radius:50%;
+    padding:10px 15px;
+    background-color:#161b20;
+}
+
+
+.outerContainer{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin:30px 50px;
+    color:white;
+}
+
+.outerContainer h2{
+    color:#E95D18;
+}
+
+.userButtonArea{
+    display:flex;
+    justify-content:space-between;
+}
+
+.buttonSection{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+    align-items:center;
+}
+
+.buttonSection a{
+    text-decoration:none;
+}
+
+.buttonSection button{
+    cursor:pointer;
+    padding:10px;
+    width:120px;
+    border:none;
+    background: #E95D18;
+    color:white;
+    font-size:15px;
+    border-radius:10px;
+}
+
+.buttonSection button:hover{
+    background-color:white;
+    color:#E95D18;
+    transition:0.5s;
+}
+
+.userSection{
+    max-width:100%;
+    width:500px;
+    display:flex;
+    gap:50px;
+}
+
+.userImage{
+    padding: 35px 40px 35px 40px;
+    width:auto;
+    font-size:50px;
+    background-color:#9A9A9A;
+    border-radius: 50%;
+    color:#34373b;
+}
+
+
+.rowSection{
+    display:flex;
+    gap:40px;
+    justify-content: space-around;
+}

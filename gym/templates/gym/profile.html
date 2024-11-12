@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EverYouth Gym - Users</title>
+    <link rel="stylesheet" href="{% static 'gym/profile.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <img src="{% static 'gym/assets/images/Logo.png' %}" alt="Logo">
+            </div>
+            <nav>
+                <a href="{% url 'dashboard' %}"><li><i class="fa-solid fa-house" style="color: #9a9a9a;"></i>Dashboard</li></a>
+                <a href="/add"><li><i class="fa-solid fa-file"></i>New Customer</li></a>
+                <a href="{% url 'dedicated' %}"><li><i class="fa-solid fa-search" style="color: #9a9a9a;"></i>Find Customer</li></a>
+                <a href="{% url 'feeDetails' %}" ><li><i class="fa-solid fa-circle-info" style="color: #9a9a9a;"></i>Fee Details</li></a>
+            </nav>
+        </div>
+        <div class="content">
+            <div class="header">
+                <h1>User Profile</h1>
+                <div class="userIcon">
+                    <a href="login.html" onclick="alert('Logged out successfully')"><i class="fa-solid fa-power-off" style="color: #c7c7c7;"></i></a>
+                </div>
+            </div>
+            <hr style="color:#9A9A9A">
+            <div class="outerContainer">
+                <div class="userButtonArea">
+                    <div class="userSection">
+                        <div class="userImage">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="user">
+                            <h2><b>{{ name }}</b></h2>
+                            <h4> Age:{{age}},{{ gender }}</h4>
+                        </div>
+                    </div>
+                    <div class="buttonSection">
+                        <a href="/edit/{{id}}"><button class="editButton">Edit Details</button></a>
+                        <a href="/pay_fees/{{id}}"><button class="payFeesButton">Pay Fees</button></a>
+                    </div>
+                </div>
+                <div class="rowSection">
+                    <div class="contactSection">
+                        <h2>Contact Information</h2>
+                        <div class="contact">
+                            <h4><b>Email:</b> {{ email }}</h4>
+                            <h4><b>Phone:</b> {{ phone }}</h4>
+                            <h4><b>Blood Group:</b> {{ bloodGroup }}</h4>
+
+                        </div>
+                    </div>
+                    <div class="physicalInformation">
+                        <h2>Physical Information</h2>
+                        <div class="physical">
+                            <h4><b>Height:</b> {{ height }} cm</h4>
+                            <h4><b>Weight:</b> {{ weight }} kg</h4>
+                            <h4><b>BMI:</b> {{ bmi }}</h4>
+                        </div>
+                    </div>
+                    <div class="otherDetails">
+                        <h2>Other Details</h2>
+                        <div class="other">
+                            <h4><b>Date of Joining:</b> {{ doj }}</h4>
+                            <h4><b>Fees Paid Upto:</b> {{ activeMonth }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/570d6d8240.js" crossorigin="anonymous"></script>
+</body>
+</html>

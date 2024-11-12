@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EverYouth Gym - Edit Customer</title>
+    <link rel="stylesheet" href="{% static 'gym/newCust.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <img src="{% static 'gym/assets/images/Logo.png' %}" alt="Logo">
+            </div>
+            <nav>
+                <a href="{% url 'dashboard' %}"><li><i class="fa-solid fa-house" style="color: #9a9a9a;"></i>Dashboard</li>
+                <a href="{% url 'add_customer' %}"style="color:#f4440e;"><li><i class="fa-solid fa-file" style="color: #f4440e;"></i>New Customer</li></a>
+                <a href="{% url 'dedicated' %}"><li><i class="fa-solid fa-search" style="color: #9a9a9a;"></i>Find Customer</li></a>
+                <a href="{% url 'feeDetails' %}"><li><i class="fa-solid fa-circle-info" style="color: #9a9a9a;"></i>Fee Details</li></a>
+            </nav>
+        </div>
+        {% if error %}
+        <div id="errorPopup" class="popup active">
+            <p>{{ error }}</p>
+            <button onclick="closePopup()">Close</button>
+        </div>
+        {% endif %}
+        <div class="content">
+            <div class="header">
+                <h1>Edit Customer</h1>
+                <div class="userIcon">
+                    <a href="{% url 'logout' %}"><i class="fa-solid fa-power-off" style="color: #c7c7c7;"></i></a>
+                </div>
+            </div>
+            <hr style="color:#9A9A9A">
+            <div class="formContainer">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="formBody">
+                        <div class="row1">
+                            <div class="formGroup">
+                                <label for="name">Name</label>
+                                <input type="text" name="name" id="name" value="{{ customer.name }}" placeholder="Enter Name" required>
+                            </div>
+                            
+                            <div class="formGroup">
+                                <label for="gender">Gender</label>
+                                <select name="gender" id="gender" required>
+                                    <option value="">--Select--</option>
+                                    <option value="M" {% if customer.gender == "M" %}selected{% endif %}>Male</option>
+                                    <option value="F" {% if customer.gender == "F" %}selected{% endif %}>Female</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row2">
+                            <div class="formGroup">
+                                <label for="phone">Phone</label>
+                                <input type="tel" name="phone" id="phone" value="{{ customer.phone_no }}" placeholder="10-digit mobile number" required>
+                            </div>
+                            <div class="formGroup">
+                                <label for="email">Email</label>
+                                <input type="email" name="email" id="email" value="{{ customer.email }}" placeholder="xyz@gmail.com">
+                            </div>
+                        </div>
+                        <div class="row3">
+                            <div class="formGroup">
+                                <label for="height">Height (in cm)</label>
+                                <input type="number" name="height" id="height" value="{{ customer.height }}" placeholder="Enter Height">
+                            </div>
+                            <div class="formGroup">
+                                <label for="weight">Weight (in kg)</label>
+                                <input type="number" name="weight" id="weight" value="{{ customer.weight }}" placeholder="Enter Weight">
+                            </div>
+                        </div>
+                        <div class="row4">
+                            <div class="formGroup">
+                                <label for="bloodGroup">Blood Group</label>
+                                <select name="bloodGroup" id="bloodGroup" required>
+                                    <option value="">--Select--</option>
+                                    {% for key, value in customer.BLOOD_GROUP_CHOICES %}
+                                        <option value="{{ key }}" {% if customer.blood_group == key %}selected{% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="formGroup">
+                                <label for="dob">Date of Birth</label>
+                                <input type="date" id="dob" name="dob" value="{{ customer.date_of_birth|date:'Y-m-d' }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="formGroup">
+                        <input type="submit" class="submitForm" value="Update">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/570d6d8240.js" crossorigin="anonymous"></script>
+</body>
+</html>

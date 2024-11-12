@@ -1,0 +1,177 @@
+body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: "Inter", sans-serif;
+      background-color: #1a1d23;
+  }
+  
+  /* Main container that wraps everything */
+  .container {
+      background-color: #26292E;
+      display: flex;
+      height: 100%;
+      min-height: 100vh;
+  }
+  
+  /* Sidebar Navbar */
+  .navbar {
+      width: 18%;
+      background-color: #1a1d23;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      padding: 30px;
+      position: relative;
+      z-index: 1;
+  }
+  
+  .navbar .logo img {
+      width: 160px;
+      height: auto;
+      margin-bottom: 40px;
+  }
+  
+  .navbar nav {
+      display: block;
+      margin-top: 30px;
+  }
+  
+  .navbar nav li {
+      list-style-type: none;
+      padding: 15px 10px;
+      font-size: 18px;
+  }
+  
+  .navbar nav a {
+      color: #9A9A9A;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: color 0.3s, font-size 0.3s;
+  }
+  
+  .navbar nav a:hover {
+      color: #E95D18;
+      font-size: 20px;
+  }
+  
+  .navbar nav a li i {
+      margin-right: 15px;
+      transition: transform 0.3s;
+  }
+  
+  .navbar nav a:hover li i {
+      transform: scale(1.2);
+  }
+  
+  /* Main content section */
+  .content {
+      width: 82%;
+      background-color: #212529;
+      padding: 20px 30px;
+      color: white;
+      overflow: auto;
+  }
+  
+  /* Page Header */
+  .header h2 {
+      color: #E95D18;
+      font-size: 26px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #E95D18;
+      padding-bottom: 10px;
+  }
+  
+  /* Table styling */
+  table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #17191C;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      margin-top: 20px;
+  }
+  
+  th, td {
+      padding: 15px 20px;
+      text-align: center;
+      border-bottom: 1px solid #333;
+      color: white;
+  }
+  
+  th {
+      background-color: #5A5A5A;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+  }
+  
+  tbody tr:nth-child(odd) {
+      background-color: #26292E;
+  }
+  
+  tbody tr:nth-child(even) {
+      background-color: #1F2023;
+  }
+  
+  tbody tr:hover {
+      background-color: #333;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  }
+  
+  /* Styling for focused row */
+  tbody tr:focus {
+      background-color: #444;
+  }
+  
+  /* Table hover animations */
+  tbody td {
+      transition: background-color 0.3s ease;
+  }
+  
+  /* Responsiveness for smaller devices */
+  @media (max-width: 768px) {
+      .navbar {
+          width: 25%;
+      }
+  
+      .content {
+          width: 75%;
+          padding: 15px;
+      }
+  
+      table th, table td {
+          padding: 12px 15px;
+          font-size: 14px;
+      }
+  
+      .navbar nav li {
+          font-size: 16px;
+      }
+  
+      .navbar nav a:hover {
+          font-size: 18px;
+      }
+  }
+  
+  @media (max-width: 480px) {
+      .navbar {
+          width: 30%;
+      }
+  
+      .content {
+          width: 70%;
+          padding: 10px;
+      }
+  
+      table th, table td {
+          padding: 10px;
+          font-size: 12px;
+      }
+  
+      .navbar nav li {
+          font-size: 14px;
+      }
+  }
+  

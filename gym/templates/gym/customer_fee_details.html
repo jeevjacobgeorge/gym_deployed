@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EverYouth Gym - HomePage</title>
+    <link rel="stylesheet" href="{% static 'gym/customer_fee_details.css' %}">
+
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <img src="{% static 'gym/assets/images/Logo.png' %}" alt="Logo">
+            </div>
+            <nav>
+                <a href="/" style="color:#f4440e;"><li><i class="fa-solid fa-house" style="color: #f4440e;"></i>Dashboard</li>
+                <a href="/add"><li><i class="fa-solid fa-file" style="color: #9a9a9a;"></i>New Customer</li></a>
+                <a href="{% url 'dedicated' %}"><li><i class="fa-solid fa-search" style="color: #9a9a9a;"></i>Find Customer</li></a>
+                <a href="/fees"><li><i class="fa-solid fa-circle-info" style="color: #9a9a9a;"></i>Fee Details</li></a>
+            </nav>
+        </div>
+        <div class="content">
+            <div class="header">
+                  <h2>Payment Details for {{ customer.name }}</h2>
+              </div>
+  
+              <table>
+                  <thead>
+                      <tr>
+                          <th>Year</th>
+                          <th>Month</th>
+                          <th>Category</th>
+                          <th>Amount Paid</th>
+                          <th>Date of Payment</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for fee in fee_details %}
+                      <tr>
+                          <td>{{ fee.year }}</td>
+                          <td>{{ fee.get_month_display }}</td>
+                          <td>{{ fee.category }}</td>
+                          <td>{{ fee.amount_paid }}</td>
+                          <td>{{ fee.date_of_payment }}</td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+          </div>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/570d6d8240.js" crossorigin="anonymous"></script>
+</body>
+</html>

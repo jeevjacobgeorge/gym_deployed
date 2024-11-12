@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EverYouth Gym - Login</title>
+    <link rel="stylesheet" href="{% static 'gym/login.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="header">
+                <h1 style="color:white;">Login </h1>
+            </div>
+            <div class="formContainer">
+                <form method="post">
+                    {% csrf_token %}    
+                    <div class="formBody">
+                        <div class="row1">
+                            <div class="formGroup">
+                                {{ form.username.label_tag }}
+                                {{ form.username }}
+                            </div>
+                            <div class="formGroup">
+                                {{ form.password.label_tag }}
+                                {{ form.password }}
+                            </div>
+                        </div>
+                        <div class="row2">
+                            <div class="formGroup">
+                                <button type="submit" class="loginBtn">Login</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

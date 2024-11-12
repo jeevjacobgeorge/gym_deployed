@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EverYouth Gym - HomePage</title>
+    <link rel="stylesheet" href="{% static 'gym/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMhvb3uaYghzTMRdMYYsdq2HKE/I0Zp8K6r5fq" crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <img src="{% static 'gym/assets/images/Logo.png' %}" alt="Logo">
+            </div>
+            <nav>
+                <a href="/" style="color:#f4440e;"><li><i class="fa-solid fa-house" style="color: #f4440e;"></i>Dashboard</li>
+                <a href="/add"><li><i class="fa-solid fa-file" style="color: #9a9a9a;"></i>New Customer</li></a>
+                <a href="{% url 'dedicated' %}"><li><i class="fa-solid fa-search" style="color: #9a9a9a;"></i>Find Customer</li></a>
+                <a href="/fees"><li><i class="fa-solid fa-circle-info" style="color: #9a9a9a;"></i>Fee Details</li></a>
+            </nav>
+        </div>
+        <div class="content">
+            <div class="header">
+                <h1>Dashboard</h1>
+                <div class="userIcon">
+                    <a href="{% url 'logout' %}" ><i class="fa-solid fa-power-off" style="color: #c7c7c7;"></i></a>
+                </div>
+            </div>
+            <hr style="color:#9A9A9A">
+            <div class="statsContainer">
+                <div class="statusCards">
+                    <div class="card">
+                        <div class="iconContainer">
+                            <i class="fa-solid fa-user" id="userIcon" style="color: #f95420;" width="50px" height="50px"></i>
+                        </div>
+                        <div class="stats">
+                            <p id="category">Total</p>
+                            <p id="value">{{no_of_customers}}</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="iconContainer">
+                            <i class="fa-solid fa-user" id="userIcon" style="color: #f95420;" width="50px" height="50px"></i>
+                        </div>
+                        <div class="stats">
+                            <p id="category">Active</p>
+                            <p id="value">{{no_of_active_males}}M {{no_of_active_females}}F</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="statusCards">
+                    <div class="card">
+                        <div class="iconContainer">
+                            <i class="fa-solid fa-user" id="userIcon" style="color: #f95420;" width="50px" height="50px"></i>
+                        </div>
+                        <div class="stats">
+                            <p id="category">Male</p>
+                            <p id="value">{{no_of_male}}</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="iconContainer">
+                            <i class="fa-solid fa-user" id="userIcon" style="color: #f95420;" width="50px" height="50px"></i>
+                        </div>
+                        <div class="stats">
+                            <p id="category">Female</p>
+                            <p id="value">{{no_of_female}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/570d6d8240.js" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EverYouth Gym - Users</title>
+    <link rel="stylesheet" href="{% static 'gym/feeDetails.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <img src="{% static 'gym/assets/images/Logo.png' %}" alt="Logo">
+            </div>
+            <nav>
+                <a href="{% url 'dashboard' %}"><li><i class="fa-solid fa-house" style="color: #9a9a9a;"></i>Dashboard</li></a>
+                <a href="/add"><li><i class="fa-solid fa-file"></i>New Customer</li></a>
+                <a href="{% url 'dedicated' %}" style="color:#f4440e;"><li><i class="fa-solid fa-search" style="color: #9a9a9a;"></i>Find Customer</li></a>
+                <a href="{% url 'feeDetails' %}"><li><i class="fa-solid fa-circle-info" style="color: #f4440e;"></i>Fee Details</li></a>
+            </nav>
+        </div>
+        <div class="content">
+            <div class="header">
+                <h1>Customer Search</h1>
+                <div class="userIcon">
+                    <a href="{% url 'logout' %}" onclick="alert('Logged out successfully')"><i class="fa-solid fa-power-off" style="color: #c7c7c7;"></i></a>
+                </div>
+            </div>
+            <hr style="color:#9A9A9A">
+            <div class="outerContainer">
+                <div class="headerButtons">
+                    <form method="GET" class="searchForm" id="searchForm">
+                        <div class="filters">
+                            <input type="text" placeholder="Search by Name / Id / Phone number" id="customerSearch" class="customerSearch" value="">
+                            <!-- <select name="gender" id="gender">
+                                <option value="select">Both</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                            </select> -->
+                            <!-- <select name="year" id="year">
+                                Year options will be populated by JavaScript -->
+                            <!-- </select> -->
+                            <!-- <select name="activity" id="activity">
+                                <option value="select">--Activity--</option>
+                                <option value="active">Active</option>
+                                <option value="non-active">Non-Active</option>
+                            </select> -->
+                        </div>
+                    </form> 
+                    
+                    <!-- <a href=""><button class="addAlumniButton">Pay Fees</button></a>  -->
+                </div>
+                <div class="table-container">
+                    <table class="last-column">
+                        
+                    </table>
+                    <table class="fixed-column">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th class="name">Name</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customer-data">
+                            <!-- Customer data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                    <div class="scrollable-columns">
+                        <table>
+                            <thead>
+                                <tr>
+                                    {% for month in months %}
+                                    <th>{{ month }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody id="fee-status">
+                                <!-- Fee status data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/570d6d8240.js" crossorigin="anonymous"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          // Function to fetch and display data
+          function fetchAndDisplayData() {
+              const gender = 'select';
+              const searchQuery = document.getElementById('customerSearch').value.trim();
+              const url = new URL("{% url 'feeDetails' %}", window.location.origin);
+      
+              if (gender !== 'select') {
+                  url.searchParams.set('gender', gender);
+              }
+              if (searchQuery) {
+                  url.searchParams.set('search', searchQuery);
+              }
+      
+              if (searchQuery) {  // Only fetch if there's a filter applied
+                  fetch(url, {
+                      headers: {
+                          'X-Requested-With': 'XMLHttpRequest'
+                      }
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      const customerData = document.getElementById('customer-data');
+                      const feeStatus = document.getElementById('fee-status');
+      
+                      customerData.innerHTML = '';
+                      feeStatus.innerHTML = '';
+      
+                      if (data.customers.length == 0) {
+                          let noData = document.createElement('tr');
+                          noData.innerHTML = '<td colspan="2">No data found</td>';
+                          customerData.appendChild(noData);
+                          return;
+                      }
+      
+                      data.customers.forEach(customerDataObj => {
+                          let customerRow = document.createElement('tr');
+                          customerRow.innerHTML = `
+                              <td>${customerDataObj.customer.admission_number}</td>
+                              <td class="name">
+                                  <a href="/profile/${customerDataObj.customer.id}/">${customerDataObj.customer.name}</a>
+                              </td>
+                          `;
+                          customerData.appendChild(customerRow);
+                      });
+                  })
+                  .catch(error => console.error('Error fetching fee details:', error));
+              }
+          }
+      
+          // Handle filter and search changes
+          const searchForm = document.getElementById('searchForm');
+          searchForm.addEventListener('change', function() {
+              fetchAndDisplayData();
+          });
+      
+          // Handle real-time search input
+          const searchInput = document.getElementById('customerSearch');
+          searchInput.addEventListener('input', function() {
+              fetchAndDisplayData();
+          });
+      });
+      </script>
+      
+</body>
+</html>

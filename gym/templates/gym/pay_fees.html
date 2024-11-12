@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EverYouth Gym - Pay Fees</title>
+    <link rel="stylesheet" href="{% static  'gym/payFees.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <img src="{% static 'gym/assets/images/Logo.png' %}" alt="Logo">
+            </div>
+            <nav>
+                <a href="{% url 'dashboard' %}"><li><i class="fa-solid fa-house" style="color: #9a9a9a;"></i>Dashboard</li></a>
+                <a href="/add"><li><i class="fa-solid fa-file"></i>New Customer</li></a>
+                <a href="{% url 'dedicated' %}"><li><i class="fa-solid fa-search" style="color: #9a9a9a;"></i>Find Customer</li></a>
+                <a href="{% url 'feeDetails' %}" style="color:#f4440e;"><li><i class="fa-solid fa-circle-info" style="color: #f4440e;"></i>Fee Details</li></a>
+            </nav>
+        </div>
+        <div class="content">
+            <div class="header">
+                <h1>Pay Fees</h1>
+                <div class="userIcon">
+                    <a href="login.html" onclick="alert('Logged out successfully')"><i class="fa-solid fa-power-off" style="color: #c7c7c7;"></i></a>
+                </div>
+            </div>
+            <hr style="color:#9A9A9A">
+            <div class="formContainer">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="formBody">
+                        <div class="row1">
+                            <div class="formGroup">
+                                <label for="name">Name:</label>
+                                <input type="text" name="name" id="name" value="{{customer.name}}" readonly required>
+                            </div>
+                            <div class="formGroup">
+                                <label for="memId">Membership ID</label>
+                                <input type="text" name="memId" id="memId" value="{{customer.admission_number}}" readonly required>
+                            </div>
+                        </div>
+                        <div class="row2">
+                            <div class="formGroup">
+                                <label for="category">Category</label>
+                                <select name="category" id="category" required>
+                                    <option value="">--Select--</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="formGroup">
+                                <label for="gender">Gender</label>
+                                <select name="gender" id="gender" readonly>
+                                    <option value="{{customer.gender}}">{% if customer.gender == 'M' %}Male{% else %}Female{% endif %}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row3">
+                            <div class="formGroup">
+                                <label for="amount">Amount</label>
+                                <input type="number" name="amount" id="amount" placeholder="Enter Amount Paid" required>
+                            </div>
+                            <div class="formGroup">
+                                <label for="dop">Date of Payment</label>
+                                <input type="date" name="dop" id="dop" required>
+                            </div>
+                        </div>
+                        <div class="row4">
+                            <div class="formGroup">
+                                <label for="month">Select Month</label>
+                                <select name="month" id="month" required>
+                                    <option value="">--Select--</option>
+                                    <option value="January">January</option>
+                                    <option value="February">February</option>
+                                    <option value="March">March</option>
+                                    <option value="April">April</option>
+                                    <option value="May">May</option>
+                                    <option value="June">June</option>
+                                    <option value="July">July</option>
+                                    <option value="August">August</option>
+                                    <option value="September">September</option>
+                                    <option value="October">October</option>
+                                    <option value="November">November</option>
+                                    <option value="December">December</option>
+                                </select>
+                            </div>
+                            <div class="formGroup">
+                                <label for="year">Select Year</label>
+                                <select name="year" id="year" required>
+                                    
+                                    {% for year in years %}
+                                        <option value="{{ year }}">{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="formGroup">
+                        <input type="submit" class="submitForm" value="Mark as Paid">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            document.getElementById('dop').value = today.toISOString().split('T')[0];
+
+            // Automatically select the current month in the month dropdown
+            const currentMonth = today.toLocaleString('default', { month: 'long' });
+            document.querySelector(`#month option[value="${currentMonth}"]`).selected = true;
+        });
+
+        let categorySelect = document.getElementById('category');
+        let amountField = document.getElementById('amount');
+
+        categorySelect.addEventListener('change', function () {
+            let categoryName = categorySelect.value;
+
+            // Fetch the fee from the server
+            fetch(`/get_fees/${categoryName}/`)
+                .then(response => response.json())
+                .then(data => {
+                    amountField.value = data.fee;
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+    <script src="https://kit.fontawesome.com/570d6d8240.js" crossorigin="anonymous"></script>
+</body>
+</html>
