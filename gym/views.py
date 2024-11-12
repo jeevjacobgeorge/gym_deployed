@@ -269,7 +269,6 @@ def profile_view(request, customer_id):
         'bmi': customer.bmi,
         'bloodGroup': customer.get_blood_group_display(),
         'doj': customer.date_of_admission,
-        'category': latest_fee_detail.get_category_display() if latest_fee_detail else 'N/A',
         'activeMonth': latest_fee_detail.get_month_display() if latest_fee_detail else 'N/A'
     }
     return render(request, 'gym/profile.html', context)
