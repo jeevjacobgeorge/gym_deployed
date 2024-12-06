@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Customer, FeeDetail, CategoryTable
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'gender', 'blood_group', 'height', 'weight', 'bmi','admission_number', 'date_of_admission', 'is_active', 'months_remaining','email','phone_no','date_of_birth') 
+    list_display = ('name', 'gender', 'blood_group', 'height', 'weight', 'bmi','admission_number', 'date_of_admission', 'months_remaining','email','phone_no','date_of_birth') 
     search_fields = ('name', 'admission_number', 'date_of_admission')
     readonly_fields = ('admission_number', 'bmi', 'months_remaining')
 

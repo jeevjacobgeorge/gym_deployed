@@ -61,12 +61,7 @@ class Customer(models.Model):
     date_of_birth = models.DateField(null=True, blank=True)
     class Meta:
         unique_together = ('name', 'phone_no')
-    @property
-    def is_active(self):
-        current_year = timezone.now().year
-        current_month = timezone.now().month
-        fees_paid = self.feedetail_set.filter(date_of_payment__year=current_year).values_list('month', flat=True)
-        return current_month in fees_paid
+
 
     @property
     def months_remaining(self):
