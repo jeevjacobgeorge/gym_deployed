@@ -9,4 +9,4 @@ def upload_to_dropbox(file_path, dropbox_path):
             raise ValueError("Dropbox access token is not set.")
     dbx = dropbox.Dropbox(access_token)
     with open(file_path, "rb") as f:
-        dbx.files_upload(f.read(), dropbox_path)
+        dbx.files_upload(f.read(), dropbox_path, mode=dropbox.files.WriteMode.overwrite)
