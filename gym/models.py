@@ -1,6 +1,16 @@
 from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from .utils.dropbox_utils import upload_to_dropbox
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from pathlib import Path
+
+
+
+DB_PATH = Path("db.sqlite3")
+DROPBOX_PATH = "/backups/db.sqlite3"
+
 class CategoryTable(models.Model):
     name = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -117,3 +127,15 @@ class FeeDetail(models.Model):
         super().delete(*args, **kwargs)
     def __str__(self):
         return f"{self.customer.name} - {self.get_month_display()} - {self.amount_paid}"
+
+@receiver(post_save, sender=Customer)
+@receiver(post_save, sender=FeeDetail)
+@receiver(post_delete, sender=Customer)
+@receiver(post_delete, sender=FeeDetail)
+@receiver(post_save, sender=CategoryTable)
+@receiver(post_delete, sender=CategoryTable)
+def backup_database_to_dropbox(sender, **kwargs):
+    # Upload the SQLite database file to Dropbox
+    if DB_PATH.exists():
+        upload_to_dropbox(str(DB_PATH), DROPBOX_PATH)
+        
