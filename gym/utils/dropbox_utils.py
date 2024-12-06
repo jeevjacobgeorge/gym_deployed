@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 
 def upload_to_dropbox(file_path, dropbox_path):
-    access_token = settings.DROPBOX_ACCESS_TOKEN
+    access_token = os.getenv("DROPBOX_ACCESS_TOKEN")
     if not access_token:
         raise ValueError("Dropbox access token is not set.")
     dbx = dropbox.Dropbox(access_token)
