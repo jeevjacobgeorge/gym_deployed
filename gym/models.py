@@ -138,4 +138,6 @@ def backup_database_to_dropbox(sender, **kwargs):
     # Upload the SQLite database file to Dropbox
     if DB_PATH.exists():
         upload_to_dropbox(str(DB_PATH), DROPBOX_PATH)
+    else:
+        print(f"{DB_PATH} does not exist.")
         
