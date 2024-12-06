@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 
-DB_PATH = Path("db.sqlite3")
+DB_PATH = Path("/home/gads/gym_mngmnt_django/db.sqlite3")
 DROPBOX_PATH = "/backups/db.sqlite3"
 
 class CategoryTable(models.Model):
