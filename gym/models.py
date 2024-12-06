@@ -12,9 +12,16 @@ DB_PATH = Path("/home/gads/gym_mngmnt_django/db.sqlite3")
 DROPBOX_PATH = "/backups/db.sqlite3"
 
 class CategoryTable(models.Model):
+    # GENDER_CHOICES = [
+    #     ('M', 'Male'),
+    #     ('F', 'Female'),
+    #     ('NotApplicable', 'NotApplicable'),
+    # ]
     name = models.CharField(max_length=50)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-
+    is_fees = models.BooleanField(default=False)
+    no_of_months = models.PositiveSmallIntegerField(default=1)
+    # gender = models.CharField(max_length=15, choices=GENDER_CHOICES,blank=True,default='M')
     def __str__(self):
         return self.name
 class Customer(models.Model):
@@ -54,11 +61,13 @@ class Customer(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=False)
     height = models.FloatField(help_text='Height in centimeters', null=True, blank=True)
     weight = models.FloatField(help_text='Weight in kilograms', null=True, blank=True)
-    blood_group = models.CharField(max_length=6, choices=BLOOD_GROUP_CHOICES,blank=False)
+    blood_group = models.CharField(max_length=6, choices=BLOOD_GROUP_CHOICES,blank=True)
     bmi = models.FloatField(editable=False, null=True, blank=True)
     admission_number = models.PositiveIntegerField(editable=False, default=0)
-    date_of_admission = models.DateField(default=timezone.now)
+    date_of_admission = models.DateField(default=timezone.now,editable=True)
     date_of_birth = models.DateField(null=True, blank=True)
+    health = models.CharField(max_length=256,editable=True,blank=True)
+
     class Meta:
         unique_together = ('name', 'phone_no')
 
@@ -115,11 +124,7 @@ class FeeDetail(models.Model):
         unique_together = ('month', 'year',
                             'category', 'customer')
         
-    def delete(self, *args, **kwargs):
-        # Prevent deletion if the category name is 'Fees'
-        if self.name == 'Fees':
-            raise ValidationError("Cannot delete the 'Fees' category.")
-        super().delete(*args, **kwargs)
+
     def __str__(self):
         return f"{self.customer.name} - {self.get_month_display()} - {self.amount_paid}"
 

@@ -41,36 +41,46 @@
                     <div class="formBody">
                         <div class="row1">
                             <div class="formGroup">
-                                <label for="name">Admission Number(Optional)</label>
-                                <input type="text" name="admission_number" id="admission_number" placeholder="Enter Admission Number">
+                                <label for="name">Name*</label>
+                                <input type="text" autocomplete="off" name="name" id="name" placeholder="Enter Name" required>
                             </div>
+                            <div class="formGroup">
+                                <label for="gender">Gender*</label>
+                                <select name="gender" id="gender" required>
+                                    <option value="">--Select--</option >
+                                    <option value="M">Male</option >
+                                    <option value="F">Female</option >
+                                </select>
+                        </div>
+                           
                         </div>
                         <div class="row2">
                             <div class="formGroup">
-                                <label for="name">Name</label>
-                                <input type="text" name="name" id="name" placeholder="Enter Name" required>
-                            </div>
-                            
-                            <div class="formGroup">
-                                    <label for="gender">Gender</label>
-                                    <select name="gender" id="gender" required>
-                                        <option value="">--Select--</option >
-                                        <option value="M">Male</option >
-                                        <option value="F">Female</option >
-                                    </select>
-                            </div>
-                        </div>
-                        <div class="row3">
-                            <div class="formGroup">
-                                <label for="phone">Phone</label>
+                                <label for="phone">Phone*</label>
                                 <input type="tel" name="phone" id="phone" placeholder="10-digit mobile number" required>
                             </div>
                             <div class="formGroup">
-                                <label for="email">Email</label>
+                                <label for="dob">Date of Birth*</label>
+                                <input type="date" id="dob" name="dob" required value="">
+                            </div>
+                            
+                        </div>
+                        
+                        <div class="row3">
+                            <div class="formGroup">
+                                <label for="date_of_admission">Date of Admission</label>
+                                <input type="date" id="date_of_admission" name="date_of_admission"  >
+                            </div>
+                            <div class="formGroup">
+                                <label for="email">Email </label>
                                 <input type="email" name="email" id="email" placeholder="xyz@gmail.com" >
                             </div>
                         </div>
                         <div class="row4">
+                            <div class="formGroup">
+                                <label for="name">Admission Number</label>
+                                <input type="text" autocomplete="off" name="admission_number" id="admission_number" placeholder="Enter Admission Number">
+                            </div>
                             <div class="formGroup">
                                 <label for="height">Height (in cm)</label>
                                 <input type="number" name="height" id="height" placeholder="Enter Height" >
@@ -83,7 +93,7 @@
                         <div class="row5">
                             <div class="formGroup">
                                 <label for="bloodGroup">Blood Group</label>
-                                <select name="bloodGroup" id="bloodGroup" required>
+                                <select name="bloodGroup" id="bloodGroup" >
                                     <option value="">--Select--</option>
                                         <option value="O+">O+</option>
                                         <option value="O-">O-</option>
@@ -105,9 +115,10 @@
                                 </select>
                             </div>
                             <div class="formGroup">
-                                <label for="dob">Date of Birth</label>
-                                <input type="date" id="dob" name="dob" required value="">
+                                <label for="health">Health Problems</label>
+                                <input type="text" autocomplete="off" name="health" id="health" placeholder="Health Data" >
                             </div>
+                           
                         </div>
                     </div>
                     <div class="formGroup">
@@ -118,6 +129,10 @@
 
         </div>
     </div>
+    <script>
+        const dateInput = document.getElementById('date_of_admission');
+        dateInput.valueAsDate = new Date();
+    </script>
     <script src="https://kit.fontawesome.com/570d6d8240.js" crossorigin="anonymous"></script>
 </body>
 </html>

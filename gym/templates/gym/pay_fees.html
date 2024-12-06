@@ -71,7 +71,7 @@
                         </div>
                         <div class="row4">
                             <div class="formGroup">
-                                <label for="month">Select Month</label>
+                                <label for="month">Select Starting Month</label>
                                 <select name="month" id="month" required>
                                     <option value="">--Select--</option>
                                     <option value="January">January</option>
@@ -91,7 +91,7 @@
                             <div class="formGroup">
                                 <label for="year">Select Year</label>
                                 <select name="year" id="year" required>
-                                    
+                                    <option value="">--Select--</option>
                                     {% for year in years %}
                                         <option value="{{ year }}">{{ year }}</option>
                                     {% endfor %}
@@ -114,7 +114,7 @@
 
             // Automatically select the current month in the month dropdown
             const currentMonth = today.toLocaleString('default', { month: 'long' });
-            document.querySelector(`#month option[value="${currentMonth}"]`).selected = true;
+            // document.querySelector(`#month option[value="${currentMonth}"]`).selected = true;
         });
 
         let categorySelect = document.getElementById('category');

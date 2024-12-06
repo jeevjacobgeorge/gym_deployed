@@ -17,7 +17,7 @@ def dashboard(request):
     data['no_of_customers'] = Customer.objects.count()
     data['no_of_male'] = Customer.objects.filter(gender='M').count()
     data['no_of_female'] = Customer.objects.filter(gender='F').count()
-    fee_id = get_object_or_404(CategoryTable,name='Fees')
+    
     # Calculate the last 3 months including potential year transitions
     current_date = datetime.now()
     current_month = current_date.month
@@ -42,10 +42,14 @@ def dashboard(request):
     for customer in Customer.objects.all():
         paid_count = 0  # Track payments for each customer
 
-        # Check if the customer has any FeeDetail entry in the last 3 months
-        for month, year in months_and_years:
-            if FeeDetail.objects.filter(customer=customer, month=month, year=year,category=fee_id.pk).exists():
-                paid_count += 1
+        fee_categories = CategoryTable.objects.filter(is_fees=True)
+
+        for fee_category in fee_categories:
+            # Check if the customer has any FeeDetail entry in the last 3 months
+            for month, year in months_and_years:
+                if FeeDetail.objects.filter(customer=customer, month=month, year=year, category=fee_category).exists():
+                    paid_count += 1
+                    break
 
         # If paid in any month of the last 3 months, count as active
         if paid_count > 0:
@@ -76,7 +80,9 @@ def add_customer(request):
         height = request.POST.get('height', None)  # Default to None if not provided
         weight = request.POST.get('weight', None)  # Default to None if not provided
         blood_group = request.POST.get('bloodGroup')
+        date_of_admission = request.POST.get('date_of_admission')
         dob = request.POST.get('dob')
+        health = request.POST.get('health')
         # Validate and save form data
         try:
             new_customer = Customer(
@@ -89,7 +95,8 @@ def add_customer(request):
                 weight=float(weight) if weight else None,
                 blood_group=blood_group,
                 date_of_birth=dob,
-                date_of_admission=timezone.now()
+                date_of_admission=date_of_admission,
+                health = health
             )
             new_customer.save()
             return redirect('profile', customer_id=new_customer.pk)
@@ -146,14 +153,18 @@ def fee_details(request):
     current_month = current_date.month 
     current_year = current_date.year
 
-    # Calculate last four months including possible year transitions
+    # Calculate the previous, current, and next months, including year transitions
     months_and_years = []
-    for i in range(3):  # Show 3 past months + current
-        month_offset = current_month - i
+    for i in range(-2, 2):  # Show 2 months before, current, and 1 month after (5 months total)
+        month_offset = current_month + i
         if month_offset <= 0:
             # Handle previous year case
             month = 12 + month_offset  # Negative values will wrap around to previous year
             year_to_add = current_year - 1
+        elif month_offset > 12:
+            # Handle next year case
+            month = month_offset - 12
+            year_to_add = current_year + 1
         else:
             month = month_offset
             year_to_add = current_year
@@ -168,7 +179,7 @@ def fee_details(request):
 
     months = [month_abbreviations[month] for month, _ in months_and_years]
 
-    # Create a list to hold the customer fee details, only for those who paid in the last 4 months
+    # Create a list to hold the customer fee details, only for those who paid in the last 5 months
     active_customers = []
     for customer in customers:
         # Initialize a dictionary to store fee status for each displayed month
@@ -177,17 +188,20 @@ def fee_details(request):
 
         for month, month_year in months_and_years:
             # Fetch the FeeDetail object for the specific month and year
-            fee_id = get_object_or_404(CategoryTable,name='Fees')
-            fee_detail = FeeDetail.objects.filter(customer=customer, year=month_year, month=month,category=fee_id.pk).first()
-            if fee_detail:
-                # If fee is paid, store the category and increment paid_count
-                fees_status[month_abbreviations[month]] = 'Paid'
-                paid_count += 1
-            else:
-                # If no fee is paid, store 'Not Paid'
-                fees_status[month_abbreviations[month]] = 'Not Paid'
+            fee_categories = CategoryTable.objects.filter(is_fees=True)
+            for fee_category in fee_categories:
+                fee_detail = FeeDetail.objects.filter(customer=customer, year=month_year, month=month, category=fee_category).first()
 
-        # Only include customers who have paid for at least one month in the last 4 months
+                if fee_detail:
+                    # If fee is paid, store the category and increment paid_count
+                    fees_status[month_abbreviations[month]] = 'Paid'
+                    paid_count += 1
+                    break
+                else:
+                    # If no fee is paid, store 'Not Paid'
+                    fees_status[month_abbreviations[month]] = 'Not Paid'
+
+        # Only include customers who have paid for at least one month in the last 5 months
         if paid_count > 0 or search_query:
             active_customers.append({
                 'customer': {
@@ -279,13 +293,15 @@ def edit_customer(request, customer_id):
     if request.method == 'POST':
         # Get the updated details from the form
         name = request.POST.get('name')
-        phone = request.POST.get('phone', None)
-        email = request.POST.get('email', None)
+        phone = request.POST.get('phone', None)  # Default to None if not provided
+        email = request.POST.get('email', None)  # Default to None if not provided
         gender = request.POST.get('gender')
-        height = request.POST.get('height', None)
-        weight = request.POST.get('weight', None)
+        height = request.POST.get('height', None)  # Default to None if not provided
+        weight = request.POST.get('weight', None)  # Default to None if not provided
         blood_group = request.POST.get('bloodGroup')
+        date_of_admission = request.POST.get('date_of_admission')
         dob = request.POST.get('dob')
+        health = request.POST.get('health')
 
         try:
             # Update the customer details
@@ -297,6 +313,8 @@ def edit_customer(request, customer_id):
             customer.weight = float(weight) if weight else None
             customer.blood_group = blood_group
             customer.date_of_birth = dob  # Ensure dob is in 'YYYY-MM-DD' format
+            customer.date_of_admission = date_of_admission
+            customer.health = health
             customer.save()
 
             return redirect('profile', customer_id=customer_id)
@@ -310,7 +328,7 @@ def pay_fees(request, customer_id):
     categories = CategoryTable.objects.values('id', 'name').distinct()
     # Prepare the list of years (current year and previous few years)
     current_year = timezone.now().year
-    years = list(range(current_year, current_year + 2))  # e.g., last 1 year and next year
+    years = list(range(current_year-1, current_year + 2))  # e.g., last 1 year and next year
 
     if request.method == 'POST':
         category_id = request.POST.get('category')
@@ -319,6 +337,7 @@ def pay_fees(request, customer_id):
         year = request.POST.get('year')  # Get the year from the form
         dop = request.POST.get('dop')
         category_instance = get_object_or_404(CategoryTable, id=category_id)
+        
         # Parse the form inputs to the appropriate types
         amount = float(amount)
         
@@ -337,16 +356,25 @@ def pay_fees(request, customer_id):
         # Convert the year to an integer
         year = int(year)
 
-        # Create FeeDetail entry
-        fee_detail = FeeDetail(
-            customer=customer,
-            amount_paid=amount,
-            date_of_payment=dop if dop else timezone.now(),
-            category=category_instance,
-            month=month,
-            year=year  # Save the selected year
-        )
-        fee_detail.save()
+        # Calculate the installment amount for each month
+        installment_amount = amount / category_instance.no_of_months
+        
+        # Start creating FeeDetail entries for each month
+        for i in range(category_instance.no_of_months):
+            # Calculate the month and year for this installment
+            current_month = (month + i - 1) % 12 + 1  # Wrap around the months (1-12)
+            current_year_adjusted = year + (month + i - 1) // 12  # Adjust year for month overflow
+            
+            # Create a FeeDetail entry for the specific month and year
+            fee_detail = FeeDetail(
+                customer=customer,
+                amount_paid=installment_amount,
+                date_of_payment=dop if dop else timezone.now(),
+                category=category_instance,
+                month=current_month,
+                year=current_year_adjusted
+            )
+            fee_detail.save()
 
         # Redirect back to the fee details page after saving
         return redirect('feeDetails')
@@ -355,9 +383,9 @@ def pay_fees(request, customer_id):
     context = {
         'customer': customer,
         'years': years,  # Pass the list of years to the template
-        'categories':categories
-
+        'categories': categories
     }
+    
     return render(request, 'gym/pay_fees.html', context)
 
 

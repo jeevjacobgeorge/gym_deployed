@@ -20,12 +20,14 @@
                 <a href="{% url 'feeDetails' %}"><li><i class="fa-solid fa-circle-info" style="color: #9a9a9a;"></i>Fee Details</li></a>
             </nav>
         </div>
+
         {% if error %}
         <div id="errorPopup" class="popup active">
             <p>{{ error }}</p>
             <button onclick="closePopup()">Close</button>
         </div>
         {% endif %}
+
         <div class="content">
             <div class="header">
                 <h1>Edit Customer</h1>
@@ -43,7 +45,6 @@
                                 <label for="name">Name</label>
                                 <input type="text" name="name" id="name" value="{{ customer.name }}" placeholder="Enter Name" required>
                             </div>
-                            
                             <div class="formGroup">
                                 <label for="gender">Gender</label>
                                 <select name="gender" id="gender" required>
@@ -88,7 +89,16 @@
                                 <input type="date" id="dob" name="dob" value="{{ customer.date_of_birth|date:'Y-m-d' }}" required>
                             </div>
                         </div>
+
+                        <!-- Set default Date of Admission to today's date -->
+                        <div class="row5">
+                            <div class="formGroup">
+                                <label for="date_of_admission">Date of Admission</label>
+                                <input type="date" id="date_of_admission" name="date_of_admission" value="{{ customer.date_of_admission|date:'Y-m-d' }}">
+                            </div>
+                        </div>
                     </div>
+
                     <div class="formGroup">
                         <input type="submit" class="submitForm" value="Update">
                     </div>
@@ -96,6 +106,7 @@
             </div>
         </div>
     </div>
+
     <script src="https://kit.fontawesome.com/570d6d8240.js" crossorigin="anonymous"></script>
 </body>
 </html>

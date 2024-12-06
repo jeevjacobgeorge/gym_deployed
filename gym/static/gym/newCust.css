@@ -70,11 +70,12 @@ body{
 .header{
     display:flex;
     justify-content: space-between;
-    padding:20px 30px 0px 40px;
+    padding:10px 30px 0px 40px;
 }
 
 .header h1{
     color:#E95D18;
+    
 }  
 
 .userIcon{
