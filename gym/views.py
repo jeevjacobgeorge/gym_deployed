@@ -382,7 +382,7 @@ def edit_customer(request, customer_id):
 
         except Exception as e:
             # Catch any unexpected error (e.g., database issues)
-            return render(request, 'gym/edit_customer.html', {'customer': customer, 'errors': 'An unexpected error occurred. Please try again.'})
+            return render(request, 'gym/edit_customer.html', {'customer': customer, 'errors': [str(e)]})
 
     # If GET request, simply render the form
     return render(request, 'gym/edit_customer.html', {'customer': customer})
