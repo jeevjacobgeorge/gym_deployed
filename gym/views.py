@@ -304,23 +304,21 @@ def edit_customer(request, customer_id):
         dob = request.POST.get('dob')
         health = request.POST.get('health')
 
-        try:
-            # Update the customer details
-            customer.name = name
-            customer.phone_no = phone
-            customer.email = email
-            customer.gender = gender
-            customer.height = float(height) if height else None
-            customer.weight = float(weight) if weight else None
-            customer.blood_group = blood_group
-            customer.date_of_birth = dob  # Ensure dob is in 'YYYY-MM-DD' format
-            customer.date_of_admission = date_of_admission
-            customer.health = health
-            customer.save()
-
-            return redirect('profile', customer_id=customer_id)
-        except ValueError:
-            return render(request, 'gym/edit_customer.html', {'error': 'Invalid input. Please enter valid data.', 'customer': customer})
+            
+        # Update the customer details
+        customer.name = name
+        customer.phone_no = phone
+        customer.email = email
+        customer.gender = gender
+        customer.height = float(height) if height else None
+        customer.weight = float(weight) if weight else None
+        customer.blood_group = blood_group
+        customer.date_of_birth = dob  # Ensure dob is in 'YYYY-MM-DD' format
+        customer.date_of_admission = date_of_admission
+        customer.health = health
+        customer.save()
+        return redirect('profile', customer_id=customer_id)
+    
 
     return render(request, 'gym/edit_customer.html', {'customer': customer})
 @login_required
