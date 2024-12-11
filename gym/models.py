@@ -9,6 +9,8 @@ from pathlib import Path
 
 
 DB_PATH = Path("/home/gads/gym_mngmnt_django/db.sqlite3")
+
+DB_PATH_local = Path("db.sqlite3")
 DROPBOX_PATH = "/backups/db.sqlite3"
 
 class CategoryTable(models.Model):
@@ -128,16 +130,18 @@ class FeeDetail(models.Model):
     def __str__(self):
         return f"{self.customer.name} - {self.get_month_display()} - {self.amount_paid}"
 
-# @receiver(post_save, sender=Customer)
-# @receiver(post_save, sender=FeeDetail)
-# @receiver(post_delete, sender=Customer)
-# @receiver(post_delete, sender=FeeDetail)
-# @receiver(post_save, sender=CategoryTable)
-# @receiver(post_delete, sender=CategoryTable)
-# def backup_database_to_dropbox(sender, **kwargs):
-#     # Upload the SQLite database file to Dropbox
-#     if DB_PATH.exists():
-#         upload_to_dropbox(str(DB_PATH), DROPBOX_PATH)
-#     else:
-#         print(f"{DB_PATH} does not exist.")
+@receiver(post_save, sender=Customer)
+@receiver(post_save, sender=FeeDetail)
+@receiver(post_delete, sender=Customer)
+@receiver(post_delete, sender=FeeDetail)
+@receiver(post_save, sender=CategoryTable)
+@receiver(post_delete, sender=CategoryTable)
+def backup_database_to_dropbox(sender, **kwargs):
+    # Upload the SQLite database file to Dropbox
+    if DB_PATH.exists():
+        upload_to_dropbox(str(DB_PATH), DROPBOX_PATH)
+    elif DB_PATH_local.exists():
+        upload_to_dropbox(str(DB_PATH_local), DROPBOX_PATH)
+    else:
+        print(f"{DB_PATH} does not exist.")
         

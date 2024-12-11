@@ -10,6 +10,7 @@ from django.contrib.auth.forms import AuthenticationForm
 import datetime
 from datetime import datetime
 from django.db import models
+from django.db import IntegrityError
 
 @login_required
 def dashboard(request):
@@ -364,17 +365,21 @@ def pay_fees(request, customer_id):
             # Calculate the month and year for this installment
             current_month = (month + i - 1) % 12 + 1  # Wrap around the months (1-12)
             current_year_adjusted = year + (month + i - 1) // 12  # Adjust year for month overflow
-            
+            try:
             # Create a FeeDetail entry for the specific month and year
-            fee_detail = FeeDetail(
-                customer=customer,
-                amount_paid=installment_amount,
-                date_of_payment=dop if dop else timezone.now(),
-                category=category_instance,
-                month=current_month,
-                year=current_year_adjusted
-            )
-            fee_detail.save()
+                fee_detail = FeeDetail(
+                    customer=customer,
+                    amount_paid=installment_amount,
+                    date_of_payment=dop if dop else timezone.now(),
+                    category=category_instance,
+                    month=current_month,
+                    year=current_year_adjusted
+                )
+                fee_detail.save()
+            except IntegrityError:
+                # Skip saving the FeeDetail if it already exists
+                return JsonResponse({'error': 'Fee already paid for this month'})
+
 
         # Redirect back to the fee details page after saving
         return redirect('feeDetails')
