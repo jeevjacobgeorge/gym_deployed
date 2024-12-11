@@ -73,38 +73,63 @@ def logout_view(request):
 @login_required
 def add_customer(request):
     if request.method == 'POST':
-        admission_number = request.POST.get('admission_number')
+        # Capture form data
         name = request.POST.get('name')
-        phone = request.POST.get('phone', None)  # Default to None if not provided
-        email = request.POST.get('email', None)  # Default to None if not provided
+        phone = request.POST.get('phone')
+        email = request.POST.get('email')
         gender = request.POST.get('gender')
-        height = request.POST.get('height', None)  # Default to None if not provided
-        weight = request.POST.get('weight', None)  # Default to None if not provided
+        height = request.POST.get('height')
+        weight = request.POST.get('weight')
         blood_group = request.POST.get('bloodGroup')
         date_of_admission = request.POST.get('date_of_admission')
         dob = request.POST.get('dob')
+        admission_number = request.POST.get('admission_number')
         health = request.POST.get('health')
-        # Validate and save form data
-        try:
-            new_customer = Customer(
-                admission_number=admission_number,
-                name=name,
-                phone_no=phone,
-                email=email,
-                gender=gender,
-                height=float(height) if height else None,
-                weight=float(weight) if weight else None,
-                blood_group=blood_group,
-                date_of_birth=dob,
-                date_of_admission=date_of_admission,
-                health = health
-            )
-            new_customer.save()
-            return redirect('profile', customer_id=new_customer.pk)
-        except ValueError:
-           return render(request,'gym/add_customer.html', {'error': 'Invalid input. Please enter valid data.'})
 
-   
+        errors = []
+
+        # Validate form data
+        if not name:
+            errors.append("Name is required.")
+        if not phone or len(phone) != 10:
+            errors.append("Valid phone number is required.")
+        if not dob:
+            errors.append("Date of birth is required.")
+        # Add other necessary validations here...
+
+        if errors:
+            return render(request, 'gym/add_customer.html', {
+                'errors': errors,
+                'name': name,
+                'phone': phone,
+                'email': email,
+                'gender': gender,
+                'height': height,
+                'weight': weight,
+                'bloodGroup': blood_group,
+                'health': health,
+                'date_of_admission': date_of_admission,
+                'admission_number': admission_number,
+                'dob': dob,
+            })
+
+        # If valid, save the new customer
+        new_customer = Customer(
+            name=name,
+            phone_no=phone,
+            email=email,
+            gender=gender,
+            height=height,
+            weight=weight,
+            blood_group=blood_group,
+            date_of_admission=date_of_admission,
+            date_of_birth=dob,
+            admission_number=admission_number,
+            health=health,
+        )
+        new_customer.save()
+
+        return redirect('profile', customer_id=new_customer.pk)
 
     return render(request, 'gym/add_customer.html')
 
@@ -287,6 +312,7 @@ def profile_view(request, customer_id):
         'activeMonth': latest_fee_detail.get_month_display() if latest_fee_detail else 'N/A'
     }
     return render(request, 'gym/profile.html', context)
+
 @login_required
 def edit_customer(request, customer_id):
     customer = get_object_or_404(Customer, pk=customer_id)
@@ -304,23 +330,72 @@ def edit_customer(request, customer_id):
         dob = request.POST.get('dob')
         health = request.POST.get('health')
 
-            
-        # Update the customer details
-        customer.name = name
-        customer.phone_no = phone
-        customer.email = email
-        customer.gender = gender
-        customer.height = float(height) if height else None
-        customer.weight = float(weight) if weight else None
-        customer.blood_group = blood_group
-        customer.date_of_birth = dob  # Ensure dob is in 'YYYY-MM-DD' format
-        customer.date_of_admission = date_of_admission
-        customer.health = health
-        customer.save()
-        return redirect('profile', customer_id=customer_id)
-    
+        # Initialize a list to store error messages
+        errors = []
 
+        # Validate height and weight
+        if height and not is_valid_number(height):
+            errors.append("Height must be a valid number.")
+        if weight and not is_valid_number(weight):
+            errors.append("Weight must be a valid number.")
+
+        # Validate other fields
+        if not name:
+            errors.append("Name is required.")
+        if not gender:
+            errors.append("Gender is required.")
+        if not dob:
+            errors.append("Date of birth is required.")
+
+        # If there are any validation errors, return to the form with errors
+        if errors:
+            return render(request, 'gym/edit_customer.html', {
+                'customer': customer,
+                'errors': errors,
+                'name': name,
+                'phone': phone,
+                'email': email,
+                'gender': gender,
+                'height': height,
+                'weight': weight,
+                'blood_group': blood_group,
+                'date_of_admission': date_of_admission,
+                'dob': dob,
+                'health': health
+            })
+
+        # No validation errors, so proceed to update the customer
+        try:
+            customer.name = name
+            customer.phone_no = phone
+            customer.email = email
+            customer.gender = gender
+            customer.height = float(height) if height else None
+            customer.weight = float(weight) if weight else None
+            customer.blood_group = blood_group
+            customer.date_of_birth = dob
+            customer.date_of_admission = date_of_admission
+            customer.health = health
+            customer.save()
+
+            return redirect('profile', customer_id=customer.id)
+
+        except Exception as e:
+            # Catch any unexpected error (e.g., database issues)
+            return render(request, 'gym/edit_customer.html', {'customer': customer, 'error': 'An unexpected error occurred. Please try again.'})
+
+    # If GET request, simply render the form
     return render(request, 'gym/edit_customer.html', {'customer': customer})
+
+
+# Helper function to check if a string is a valid number
+def is_valid_number(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
 @login_required
 def pay_fees(request, customer_id):
     customer = get_object_or_404(Customer, pk=customer_id)

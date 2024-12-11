@@ -14,24 +14,31 @@
                 <img src="{% static 'gym/assets/images/Logo.png' %}" alt="Logo">
             </div>
             <nav>
-                <a href="{% url 'dashboard' %}"><li><i class="fa-solid fa-house" style="color: #9a9a9a;"></i>Dashboard</li>
-                <a href="#"style="color:#f4440e;"><li><i class="fa-solid fa-file" style="color: #f4440e;"></i>New Customer</li></a>
+                <a href="{% url 'dashboard' %}"><li><i class="fa-solid fa-house" style="color: #9a9a9a;"></i>Dashboard</li></a>
+                <a href="#" style="color:#f4440e;"><li><i class="fa-solid fa-file" style="color: #f4440e;"></i>New Customer</li></a>
                 <a href="{% url 'dedicated' %}"><li><i class="fa-solid fa-search" style="color: #9a9a9a;"></i>Find Customer</li></a>
                 <a href="{% url 'feeDetails' %}"><li><i class="fa-solid fa-circle-info" style="color: #9a9a9a;"></i>Fee Details</li></a>
             </nav>
         </div>
-        {% if error %}
+
+        <!-- Display Errors if any -->
+        {% if errors %}
         <div id="errorPopup" class="popup active">
-            <p>{{ error }}</p>
+            <p><strong>Errors:</strong></p>
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
             <button onclick="closePopup()">Close</button>
         </div>
         {% endif %}
+
         <div class="content">
             <div class="header">
                 <h1>New Customer</h1>
                 <div class="userIcon">
-                    <!-- <a href="login.html" onclick="alert('Logged out successfully')"><i class="fa-solid fa-user" style="color: #c7c7c7;"></i></a> -->
-                    <a href="{% url 'logout' %}" ><i class="fa-solid fa-power-off" style="color: #c7c7c7;"></i></a>
+                    <a href="{% url 'logout' %}"><i class="fa-solid fa-power-off" style="color: #c7c7c7;"></i></a>
                 </div>
             </div>
             <hr style="color:#9A9A9A">
@@ -42,93 +49,85 @@
                         <div class="row1">
                             <div class="formGroup">
                                 <label for="name">Name*</label>
-                                <input type="text" autocomplete="off" name="name" id="name" placeholder="Enter Name" required>
+                                <input type="text" autocomplete="off" name="name" id="name" placeholder="Enter Name" value="{{ name|default:'' }}" required>
                             </div>
                             <div class="formGroup">
                                 <label for="gender">Gender*</label>
                                 <select name="gender" id="gender" required>
-                                    <option value="">--Select--</option >
-                                    <option value="M">Male</option >
-                                    <option value="F">Female</option >
+                                    <option value="">--Select--</option>
+                                    <option value="M" {% if gender == "M" %}selected{% endif %}>Male</option>
+                                    <option value="F" {% if gender == "F" %}selected{% endif %}>Female</option>
                                 </select>
+                            </div>
                         </div>
-                           
-                        </div>
+
                         <div class="row2">
                             <div class="formGroup">
                                 <label for="phone">Phone*</label>
-                                <input type="tel" autocomplete="off" name="phone" id="phone" placeholder="10-digit mobile number" required>
+                                <input type="tel" autocomplete="off" name="phone" id="phone" placeholder="10-digit mobile number" value="{{ phone|default:'' }}" required>
                             </div>
                             <div class="formGroup">
                                 <label for="dob">Date of Birth*</label>
-                                <input type="date" autocomplete="off" id="dob" name="dob" required value="">
+                                <input type="date" autocomplete="off" id="dob" name="dob" value="{{ dob|default:'' }}" required>
                             </div>
-                            
                         </div>
-                        
+
                         <div class="row3">
                             <div class="formGroup">
                                 <label for="date_of_admission">Date of Admission</label>
-                                <input type="date" autocomplete="off" id="date_of_admission" name="date_of_admission"  >
+                                <input type="date" autocomplete="off" id="date_of_admission" name="date_of_admission" value="{{ date_of_admission|default:'' }}">
                             </div>
                             <div class="formGroup">
-                                <label for="email">Email </label>
-                                <input type="email" autocomplete="off" name="email" id="email" placeholder="xyz@gmail.com" >
+                                <label for="email">Email</label>
+                                <input type="email" autocomplete="off" name="email" id="email" placeholder="xyz@gmail.com" value="{{ email|default:'' }}">
                             </div>
                         </div>
+
                         <div class="row4">
                             <div class="formGroup">
-                                <label for="name">Admission Number</label>
-                                <input type="text" autocomplete="off" name="admission_number" id="admission_number" placeholder="Enter Admission Number">
+                                <label for="admission_number">Admission Number</label>
+                                <input type="text" autocomplete="off" name="admission_number" id="admission_number" placeholder="Enter Admission Number" value="{{ admission_number|default:'' }}">
                             </div>
                             <div class="formGroup">
                                 <label for="height">Height (in cm)</label>
-                                <input type="number" autocomplete="off" name="height" id="height" placeholder="Enter Height" >
+                                <input type="number" autocomplete="off" name="height" id="height" placeholder="Enter Height" value="{{ height|default:'' }}">
                             </div>
                             <div class="formGroup">
                                 <label for="weight">Weight (in kg)</label>
-                                <input type="number" autocomplete="off" name="weight" id="weight" placeholder="Enter Weight" >
+                                <input type="number" autocomplete="off" name="weight" id="weight" placeholder="Enter Weight" value="{{ weight|default:'' }}">
                             </div>
                         </div>
+
                         <div class="row5">
                             <div class="formGroup">
                                 <label for="bloodGroup">Blood Group</label>
-                                <select name="bloodGroup" id="bloodGroup" >
+                                <select name="bloodGroup" id="bloodGroup">
                                     <option value="">--Select--</option>
-                                        <option value="O+">O+</option>
-                                        <option value="O-">O-</option>
-                                        <option value="A+">A+</option>
-                                        <option value="A-">A-</option>
-                                        <option value="B+">B+</option>
-                                        <option value="B-">B-</option>
-                                        <option value="AB+">AB+</option>
-                                        <option value="AB-">AB-</option>
-                                        <option value="A1+">A1+</option>
-                                        <option value="A1-">A1-</option>
-                                        <option value="A2+">A2+</option>
-                                        <option value="A2-">A2-</option>
-                                        <option value="A1B+">A1B+</option>
-                                        <option value="A1B-">A1B-</option>
-                                        <option value="A2B+">A2B+</option>
-                                        <option value="A2B-">A2B-</option>
-                                        <option value="BOMBAY">BOMBAY</option>
+                                    <option value="O+" {% if bloodGroup == "O+" %}selected{% endif %}>O+</option>
+                                    <option value="O-" {% if bloodGroup == "O-" %}selected{% endif %}>O-</option>
+                                    <option value="A+" {% if bloodGroup == "A+" %}selected{% endif %}>A+</option>
+                                    <option value="A-" {% if bloodGroup == "A-" %}selected{% endif %}>A-</option>
+                                    <option value="B+" {% if bloodGroup == "B+" %}selected{% endif %}>B+</option>
+                                    <option value="B-" {% if bloodGroup == "B-" %}selected{% endif %}>B-</option>
+                                    <option value="AB+" {% if bloodGroup == "AB+" %}selected{% endif %}>AB+</option>
+                                    <option value="AB-" {% if bloodGroup == "AB-" %}selected{% endif %}>AB-</option>
                                 </select>
                             </div>
                             <div class="formGroup">
                                 <label for="health">Health Problems</label>
-                                <input type="text" autocomplete="off" name="health" id="health" placeholder="Health Data" >
+                                <input type="text" autocomplete="off" name="health" id="health" placeholder="Health Data" value="{{ health|default:'' }}">
                             </div>
-                           
                         </div>
                     </div>
+
                     <div class="formGroup">
                         <input type="submit" class="submitForm" value="Create">
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
+
     <script>
         const dateInput = document.getElementById('date_of_admission');
         dateInput.valueAsDate = new Date();
