@@ -378,7 +378,7 @@ def edit_customer(request, customer_id):
             customer.health = health
             customer.save()
 
-            return redirect('profile', customer_id=customer.id)
+            return redirect('profile', customer_id=customer_id)
 
         except Exception as e:
             # Catch any unexpected error (e.g., database issues)
