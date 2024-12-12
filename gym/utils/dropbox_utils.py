@@ -43,7 +43,8 @@ def upload_to_dropbox(file_path, dropbox_path):
     refresh_token = os.getenv("DROPBOX_REFRESH_TOKEN")
     
     if not access_token or not refresh_token:
-        raise ValueError("Dropbox access token or refresh token is not set.")
+        new_access_token,refresh_token = refresh_access_token(refresh_token)
+        access_token = new_access_token
     
     dbx = dropbox.Dropbox(access_token)
     
