@@ -101,16 +101,11 @@
                         <div class="row5">
                             <div class="formGroup">
                                 <label for="bloodGroup">Blood Group</label>
-                                <select name="bloodGroup" id="bloodGroup">
+                                <select name="bloodGroup" id="bloodGroup" required>
                                     <option value="">--Select--</option>
-                                    <option value="O+" {% if bloodGroup == "O+" %}selected{% endif %}>O+</option>
-                                    <option value="O-" {% if bloodGroup == "O-" %}selected{% endif %}>O-</option>
-                                    <option value="A+" {% if bloodGroup == "A+" %}selected{% endif %}>A+</option>
-                                    <option value="A-" {% if bloodGroup == "A-" %}selected{% endif %}>A-</option>
-                                    <option value="B+" {% if bloodGroup == "B+" %}selected{% endif %}>B+</option>
-                                    <option value="B-" {% if bloodGroup == "B-" %}selected{% endif %}>B-</option>
-                                    <option value="AB+" {% if bloodGroup == "AB+" %}selected{% endif %}>AB+</option>
-                                    <option value="AB-" {% if bloodGroup == "AB-" %}selected{% endif %}>AB-</option>
+                                    {% for value, label in blood_group_choices %}
+                                        <option value="{{ value }}" {% if bloodGroup == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="formGroup">
@@ -129,6 +124,10 @@
     </div>
 
     <script>
+        function closePopup() {
+            var popup = document.getElementById('errorPopup');
+            popup.classList.remove('active');  // Remove the "active" class to hide the popup
+        }
         const dateInput = document.getElementById('date_of_admission');
         dateInput.valueAsDate = new Date();
     </script>

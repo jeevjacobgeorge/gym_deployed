@@ -86,6 +86,12 @@ def add_customer(request):
         admission_number = request.POST.get('admission_number')
         health = request.POST.get('health')
 
+        # Handle empty fields for height and weight
+        if height == '':
+            height = None
+        if weight == '':
+            weight = None
+
         errors = []
 
         # Validate form data
@@ -95,8 +101,8 @@ def add_customer(request):
             errors.append("Valid phone number is required.")
         if not dob:
             errors.append("Date of birth is required.")
-        # Add other necessary validations here...
 
+        # Return form with errors if validation fails
         if errors:
             return render(request, 'gym/add_customer.html', {
                 'errors': errors,
@@ -111,6 +117,7 @@ def add_customer(request):
                 'date_of_admission': date_of_admission,
                 'admission_number': admission_number,
                 'dob': dob,
+                'blood_group_choices': Customer.BLOOD_GROUP_CHOICES,  # Pass the choices to template
             })
 
         # If valid, save the new customer
@@ -131,8 +138,10 @@ def add_customer(request):
 
         return redirect('profile', customer_id=new_customer.pk)
 
-    return render(request, 'gym/add_customer.html')
-
+    # Pass blood group choices to template on GET request
+    return render(request, 'gym/add_customer.html', {
+        'blood_group_choices': Customer.BLOOD_GROUP_CHOICES,
+    })
 
 
 def login_view(request):
