@@ -79,7 +79,11 @@
                             <thead>
                                 <tr>
                                     {% for month in months %}
+                                    {% if month == current_month %}
+                                    <th class = "current-month">{{ month }}</th>
+                                    {% else %}
                                     <th>{{ month }}</th>
+                                    {% endif %}
                                     {% endfor %}
                                 </tr>
                             </thead>

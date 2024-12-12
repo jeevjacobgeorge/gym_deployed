@@ -181,7 +181,7 @@ def fee_details(request):
 
     # Calculate the previous, current, and next months, including year transitions
     months_and_years = []
-    for i in range(-2, 2):  # Show 2 months before, current, and 1 month after (5 months total)
+    for i in range(-1, 3):  # Show 2 months before, current, and 1 month after (5 months total)
         month_offset = current_month + i
         if month_offset <= 0:
             # Handle previous year case
@@ -241,11 +241,12 @@ def fee_details(request):
 
     # Sort customers by activity (paid_count in descending order)
     active_customers.sort(key=lambda x: x['paid_count'], reverse=True)
-    
+    current_month = datetime.now().month  # Get the current month (1-12)
     context = {
         'customers': active_customers,
         'months': months,
         'year': year,
+        'current_month': month_abbreviations[current_month]
     }
 
     # Return JSON response for AJAX requests
