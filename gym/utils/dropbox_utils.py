@@ -29,7 +29,9 @@ def refresh_access_token(refresh_token):
         print("Got new access token")
         print(response.json())
         tokens = response.json()
-        return tokens['access_token']
+        if 'refresh_token' in tokens:
+            refresh_token = tokens['refresh_token']
+        return tokens['access_token'], refresh_token
     else:
         print(f"Error refreshing token: {response.text}")
         return None, None
@@ -56,7 +58,7 @@ def upload_to_dropbox(file_path, dropbox_path):
         print(f"Authentication error: {e}")
         
         # Refresh the access token
-        new_access_token = refresh_access_token(refresh_token)
+        new_access_token,refresh_token = refresh_access_token(refresh_token)
         
         if new_access_token:
             # Update the access token (refresh token stays the same)
