@@ -34,7 +34,7 @@ def refresh_access_token(refresh_token):
         return tokens['access_token'], refresh_token
     else:
         print(f"Error refreshing token: {response.text}")
-        return None, None
+        return None, refresh_token
 
 # Function to upload a file to Dropbox
 def upload_to_dropbox(file_path, dropbox_path):
