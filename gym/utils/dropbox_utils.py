@@ -1,7 +1,7 @@
 import os
 import dropbox
 import requests
-from dotenv import load_dotenv
+from dotenv import load_dotenv, set_key
 from django.conf import settings
 
 # Load environment variables from .env file
@@ -9,6 +9,16 @@ load_dotenv()
 
 # Dropbox API URL for refreshing the access token
 TOKEN_URL = 'https://api.dropbox.com/oauth2/token'
+
+def update_refresh_token_in_env(new_refresh_token):
+    """Update the REFRESH_TOKEN in the .env file."""
+    env_file = '.env'  # Path to your .env file
+
+    # Update the REFRESH_TOKEN in the .env file
+    set_key(env_file, 'DROPBOX_REFRESH_TOKEN', new_refresh_token)
+
+    # Reload environment variables to reflect the change
+    load_dotenv()
 
 # Function to refresh the access token using the refresh token
 def refresh_access_token(refresh_token):
@@ -30,8 +40,10 @@ def refresh_access_token(refresh_token):
         print(response.json())
         tokens = response.json()
         if 'refresh_token' in tokens:
-            refresh_token = tokens['refresh_token']
-        return tokens['access_token'], refresh_token
+            new_refresh_token = tokens['refresh_token']
+            # Update the refresh token in the .env file
+            update_refresh_token_in_env(new_refresh_token)
+        return tokens['access_token'], new_refresh_token
     else:
         print(f"Error refreshing token: {response.text}")
         return None, refresh_token
@@ -43,7 +55,7 @@ def upload_to_dropbox(file_path, dropbox_path):
     refresh_token = os.getenv("DROPBOX_REFRESH_TOKEN")
     
     if not access_token or not refresh_token:
-        new_access_token,refresh_token = refresh_access_token(refresh_token)
+        new_access_token, refresh_token = refresh_access_token(refresh_token)
         access_token = new_access_token
     
     dbx = dropbox.Dropbox(access_token)
@@ -59,7 +71,7 @@ def upload_to_dropbox(file_path, dropbox_path):
         print(f"Authentication error: {e}")
         
         # Refresh the access token
-        new_access_token,refresh_token = refresh_access_token(refresh_token)
+        new_access_token, refresh_token = refresh_access_token(refresh_token)
         
         if new_access_token:
             # Update the access token (refresh token stays the same)
