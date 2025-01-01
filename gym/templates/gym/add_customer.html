@@ -38,8 +38,13 @@
             <div class="header">
                 <h1>New Customer</h1>
                 <div class="userIcon">
-                    <a href="{% url 'logout' %}"><i class="fa-solid fa-power-off" style="color: #c7c7c7;"></i></a>
-                </div>
+                    <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; padding: 0; cursor: pointer;">
+                            <i class="fa-solid fa-power-off" style="color: #c7c7c7;"></i>
+                        </button>
+                    </form>
+                </div>  
             </div>
             <hr style="color:#9A9A9A">
             <div class="formContainer">
