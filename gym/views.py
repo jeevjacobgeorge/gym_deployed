@@ -89,8 +89,12 @@ def add_customer(request):
         # Handle empty fields for height and weight
         if height == '':
             height = None
+        else:
+            height = int(height)
         if weight == '':
             weight = None
+        else:
+            weight = int(weight)
 
         errors = []
 
