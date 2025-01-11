@@ -90,11 +90,11 @@ def add_customer(request):
         if height == '':
             height = None
         else:
-            height = int(height)
+            height = float(height)
         if weight == '':
             weight = None
         else:
-            weight = int(weight)
+            weight = float(weight)
 
         errors = []
 
