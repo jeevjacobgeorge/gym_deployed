@@ -74,13 +74,6 @@ class Customer(models.Model):
         unique_together = ('name', 'phone_no')
 
 
-    @property
-    def months_remaining(self):
-        current_year = timezone.now().year
-        current_month = timezone.now().month
-        fees_paid = self.feedetail_set.filter(date_of_payment__year=current_year).values_list('month', flat=True)
-        remaining_months = len([month for month in range(current_month, 13) if month not in fees_paid])
-        return remaining_months 
 
     def save(self, *args, **kwargs):
         if not self.admission_number:
