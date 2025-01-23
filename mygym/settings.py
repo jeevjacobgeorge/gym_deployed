@@ -80,14 +80,13 @@ if os.getenv('DJANGO_ENV') == 'production':  # Hosted environment
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'init_command': 'SET default_storage_engine=INNODB',
-            },
             'NAME': 'gads$gym',
             'USER': 'gads',
             'PASSWORD': 'gads@123',
             'HOST': 'gads.mysql.pythonanywhere-services.com',
-            'PORT': '3306',  # Default MySQL port
+            'OPTIONS': {
+             'init_command': 'SET default_storage_engine=INNODB',
+         },
         }
     }
 else:  # Local environment
