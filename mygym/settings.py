@@ -82,14 +82,28 @@ DATABASES = {
         'OPTIONS': {
             'init_command': 'SET default_storage_engine=INNODB',
         },
-        'NAME': 'gym',
-        'USER': 'root',
+        'NAME': 'gads$gym',
+        'USER': 'gads',
         'PASSWORD': 'gads@123',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-
+        'HOST': 'gads.mysql.pythonanywhere-services.com',
     }
 }
+# DATABASES = {
+#     'default': {
+#         # 'ENGINE': 'django.db.backends.sqlite3',
+#         # 'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.mysql',
+#         'OPTIONS': {
+#             'init_command': 'SET default_storage_engine=INNODB',
+#         },
+#         'NAME': 'gym',
+#         'USER': 'root',
+#         'PASSWORD': '',
+#         'HOST': '127.0.0.1',
+#         'PORT': '3306',
+
+#     }
+# }
 
 
 # Password validation
