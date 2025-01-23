@@ -74,36 +74,36 @@ WSGI_APPLICATION = 'mygym.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'init_command': 'SET default_storage_engine=INNODB',
-        },
-        'NAME': 'gads$gym',
-        'USER': 'gads',
-        'PASSWORD': 'gads@123',
-        'HOST': 'gads.mysql.pythonanywhere-services.com',
-    }
-}
-# DATABASES = {
-#     'default': {
-#         # 'ENGINE': 'django.db.backends.sqlite3',
-#         # 'NAME': BASE_DIR / 'db.sqlite3',
-#         'ENGINE': 'django.db.backends.mysql',
-#         'OPTIONS': {
-#             'init_command': 'SET default_storage_engine=INNODB',
-#         },
-#         'NAME': 'gym',
-#         'USER': 'root',
-#         'PASSWORD': '',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306',
+import os
 
-#     }
-# }
+if os.getenv('DJANGO_ENV') == 'production':  # Hosted environment
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET default_storage_engine=INNODB',
+            },
+            'NAME': 'gads$gym',
+            'USER': 'gads',
+            'PASSWORD': 'gads@123',
+            'HOST': 'gads.mysql.pythonanywhere-services.com',
+            'PORT': '3306',  # Default MySQL port
+        }
+    }
+else:  # Local environment
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'init_command': 'SET default_storage_engine=INNODB',
+            },
+            'NAME': 'gym',
+            'USER': 'root',
+            'PASSWORD': '',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',  # Default MySQL port
+        }
+    }
 
 
 # Password validation
