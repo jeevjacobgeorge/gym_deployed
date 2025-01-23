@@ -58,7 +58,7 @@ class Customer(models.Model):
 
     unique_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255,blank=False)
-    phone_no = models.CharField(max_length=10, blank=True)
+    phone_no = models.CharField(max_length=13, blank=True)
     email = models.EmailField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,blank=False)
     height = models.FloatField(help_text='Height in centimeters', null=True, blank=True)

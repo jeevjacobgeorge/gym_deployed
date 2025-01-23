@@ -8,62 +8,47 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 import datetime
-from datetime import datetime
-from django.db import models
-from django.db import IntegrityError
+from datetime import datetime, timedelta
+from django.utils import timezone  # For timezone-aware operations
+from django.db import models, IntegrityError
+from django.db.models import Q, Prefetch, Count
+
 
 @login_required
 def dashboard(request):
+    print("dashboard")
     data = {}
+
+    # General stats
     data['no_of_customers'] = Customer.objects.count()
     data['no_of_male'] = Customer.objects.filter(gender='M').count()
     data['no_of_female'] = Customer.objects.filter(gender='F').count()
-    
-    # Calculate the last 3 months including potential year transitions
+
+    # Calculate last 3 months (considering year transitions)
     current_date = datetime.now()
-    current_month = current_date.month
-    current_year = current_date.year
+    last_3_months = [(current_date.month - i - 1) % 12 + 1 for i in range(3)]
+    last_3_years = [current_date.year - (1 if current_date.month - i - 1 < 0 else 0) for i in range(3)]
+    months_and_years = list(zip(last_3_months, last_3_years))
 
-    # Generate month and year combinations for the last 3 months
-    months_and_years = []
-    for i in range(3):  # Adjust for 3 past months
-        month_offset = current_month - i
-        if month_offset <= 0:
-            month = 12 + month_offset
-            year_to_add = current_year - 1
-        else:
-            month = month_offset
-            year_to_add = current_year
-        months_and_years.append((month, year_to_add))
+    # Pre-fetch necessary data
+    fee_categories = CategoryTable.objects.filter(is_fees=True).values_list('id', flat=True)
+    fee_details = FeeDetail.objects.filter(
+        Q(month__in=[m[0] for m in months_and_years], year__in=[y[1] for y in months_and_years]),
+        category_id__in=fee_categories
+    ).select_related('customer')
 
-    # Filter active male and female customers who paid within the last 3 months
-    active_male_count = 0
-    active_female_count = 0
-
-    for customer in Customer.objects.all():
-        paid_count = 0  # Track payments for each customer
-
-        fee_categories = CategoryTable.objects.filter(is_fees=True)
-
-        for fee_category in fee_categories:
-            # Check if the customer has any FeeDetail entry in the last 3 months
-            for month, year in months_and_years:
-                if FeeDetail.objects.filter(customer=customer, month=month, year=year, category=fee_category).exists():
-                    paid_count += 1
-                    break
-
-        # If paid in any month of the last 3 months, count as active
-        if paid_count > 0:
-            if customer.gender == 'M':
-                active_male_count += 1
-            elif customer.gender == 'F':
-                active_female_count += 1
+    # Count active males and females
+    active_customers = fee_details.values('customer__pk', 'customer__gender').distinct()
+    active_male_count = active_customers.filter(customer__gender='M').count()
+    active_female_count = active_customers.filter(customer__gender='F').count()
 
     # Populate active counts
     data['no_of_active_males'] = active_male_count
     data['no_of_active_females'] = active_female_count
 
+    print("dashboard2")
     return render(request, 'gym/dashboard.html', data)
+
 
 
 def logout_view(request):
@@ -162,6 +147,7 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, 'gym/login.html', {'form': form})
 
+
 @login_required
 def fee_details(request):
     gender = request.GET.get('gender', 'select')
@@ -173,12 +159,12 @@ def fee_details(request):
     if gender != 'select':
         customers = customers.filter(gender=gender)
 
-    # Filter customers by search query for name or membership ID
+    # Filter customers by search query for name, membership ID, or phone number
     if search_query:
         customers = customers.filter(
-            models.Q(name__icontains=search_query) |
-            models.Q(admission_number__icontains=search_query) |
-            models.Q(phone_no__icontains=search_query)
+            Q(name__icontains=search_query) |
+            Q(admission_number__icontains=search_query) |
+            Q(phone_no__icontains=search_query)
         )
 
     # Validate year
@@ -187,60 +173,62 @@ def fee_details(request):
     except ValueError:
         year = timezone.now().year
 
-    # Get the current date and month
+    # Get current month and calculate 5 months range (previous, current, and next months)
     current_date = datetime.now()
-    current_month = current_date.month 
+    current_month = current_date.month
     current_year = current_date.year
 
-    # Calculate the previous, current, and next months, including year transitions
+    # Generate months and years for the range
     months_and_years = []
-    for i in range(-1, 3):  # Show 2 months before, current, and 1 month after (5 months total)
+    for i in range(-1, 3):  # Previous month, current month, and next two months
         month_offset = current_month + i
         if month_offset <= 0:
-            # Handle previous year case
-            month = 12 + month_offset  # Negative values will wrap around to previous year
+            month = 12 + month_offset  # Wrap to the previous year
             year_to_add = current_year - 1
         elif month_offset > 12:
-            # Handle next year case
-            month = month_offset - 12
+            month = month_offset - 12  # Wrap to the next year
             year_to_add = current_year + 1
         else:
             month = month_offset
             year_to_add = current_year
         months_and_years.append((month, year_to_add))
 
-    # Map month numbers to their abbreviations
+    # Map month numbers to abbreviations
     month_abbreviations = {
         1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr',
         5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug',
         9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'
     }
-
     months = [month_abbreviations[month] for month, _ in months_and_years]
 
-    # Create a list to hold the customer fee details, only for those who paid in the last 5 months
+    # Pre-fetch all relevant FeeDetails and Fee Categories in a single query
+    fee_categories = CategoryTable.objects.filter(is_fees=True).values_list('id', flat=True)
+    fee_details = FeeDetail.objects.filter(
+        Q(month__in=[m[0] for m in months_and_years], year__in=[y[1] for y in months_and_years]),
+        category_id__in=fee_categories
+    ).select_related('customer')
+
+    # Create a mapping of customer fee details
+    fee_details_mapping = {}
+    for fee_detail in fee_details:
+        key = (fee_detail.customer_id, fee_detail.month, fee_detail.year)
+        fee_details_mapping[key] = 'Paid'
+
+    # Prepare customer fee status
     active_customers = []
     for customer in customers:
-        # Initialize a dictionary to store fee status for each displayed month
         fees_status = {}
         paid_count = 0
 
         for month, month_year in months_and_years:
-            # Fetch the FeeDetail object for the specific month and year
-            fee_categories = CategoryTable.objects.filter(is_fees=True)
-            for fee_category in fee_categories:
-                fee_detail = FeeDetail.objects.filter(customer=customer, year=month_year, month=month, category=fee_category).first()
+            key = (customer.pk, month, month_year)
+            if fee_details_mapping.get(key) == 'Paid':
+                fees_status[month_abbreviations[month]] = 'Paid'
+                paid_count += 1
+            else:
+                fees_status[month_abbreviations[month]] = 'Not Paid'
 
-                if fee_detail:
-                    # If fee is paid, store the category and increment paid_count
-                    fees_status[month_abbreviations[month]] = 'Paid'
-                    paid_count += 1
-                    break
-                else:
-                    # If no fee is paid, store 'Not Paid'
-                    fees_status[month_abbreviations[month]] = 'Not Paid'
-
-        # Only include customers who have paid for at least one month in the last 5 months
+        # Only include customers who have paid for at least one month in the last 5 months or match search query
         if paid_count > 0 or search_query:
             active_customers.append({
                 'customer': {
@@ -249,17 +237,18 @@ def fee_details(request):
                     'name': customer.name,
                 },
                 'fees_status': fees_status,
-                'paid_count': paid_count  # Track how many months they paid
+                'paid_count': paid_count
             })
 
     # Sort customers by activity (paid_count in descending order)
     active_customers.sort(key=lambda x: x['paid_count'], reverse=True)
-    current_month = datetime.now().month  # Get the current month (1-12)
+
+    # Prepare the context
     context = {
         'customers': active_customers,
         'months': months,
         'year': year,
-        'current_month': month_abbreviations[current_month]
+        'current_month': month_abbreviations[current_month],
     }
 
     # Return JSON response for AJAX requests
