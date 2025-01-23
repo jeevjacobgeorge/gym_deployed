@@ -84,7 +84,7 @@ DATABASES = {
         },
         'NAME': 'gym',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'gads@123',
         'HOST': '127.0.0.1',
         'PORT': '3306',
 
