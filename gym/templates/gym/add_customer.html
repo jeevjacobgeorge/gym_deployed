@@ -73,7 +73,7 @@
                             </div>
                             <div class="formGroup">
                                 <label for="dob">Date of Birth*</label>
-                                <input type="date" autocomplete="off" id="dob" name="dob" value="{{ dob|default:'' }}" required>
+                                <input type="date" autocomplete="off" id="dob" name="dob" value="{{ dob|default:'' }}" >
                             </div>
                         </div>
 
@@ -91,7 +91,7 @@
                         <div class="row4">
                             <div class="formGroup">
                                 <label for="admission_number">Admission Number</label>
-                                <input type="text" autocomplete="off" name="admission_number" id="admission_number" placeholder="Enter Admission Number" value="{{ admission_number|default:'' }}">
+                                <input type="text" autocomplete="off" name="admission_number" id="admission_number" placeholder="Enter Admission Number" value="{{ admission_number|default:'' }}" required>
                             </div>
                             <div class="formGroup">
                                 <label for="height">Height (in cm)</label>
@@ -107,7 +107,7 @@
                             <div class="formGroup">
                                 <label for="bloodGroup">Blood Group</label>
                                 <select name="bloodGroup" id="bloodGroup" required>
-                                    <option value="">--Select--</option>
+                                    <option value="">--Not Mentioned--</option> 
                                     {% for value, label in blood_group_choices %}
                                         <option value="{{ value }}" {% if bloodGroup == value %}selected{% endif %}>{{ label }}</option>
                                     {% endfor %}
