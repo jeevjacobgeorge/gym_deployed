@@ -13,7 +13,6 @@ from django.utils import timezone  # For timezone-aware operations
 from django.db import models, IntegrityError
 from django.db.models import Q, Prefetch, Count
 
-
 @login_required
 def dashboard(request):
     print("dashboard")
@@ -88,8 +87,24 @@ def add_customer(request):
             errors.append("Name is required.")
         if not phone or len(phone) != 10:
             errors.append("Valid phone number is required.")
-        if not dob:
-            errors.append("Date of birth is required.")
+        
+
+        # Parse and validate dates
+        try:
+            if date_of_admission:
+                date_of_admission = datetime.strptime(date_of_admission, '%Y-%m-%d').date()
+            else:
+                date_of_admission = None  # Handle empty date
+        except ValueError:
+            errors.append("Invalid date format for Date of Admission. Use YYYY-MM-DD.")
+
+        try:
+            if dob:
+                dob = datetime.strptime(dob, '%Y-%m-%d').date()
+            else:
+                dob = None  # Handle empty date
+        except ValueError:
+            errors.append("Invalid date format for Date of Birth. Use YYYY-MM-DD.")
 
         # Return form with errors if validation fails
         if errors:
@@ -302,6 +317,7 @@ def profile_view(request, customer_id):
         age = None
     context = {
         'name': customer.name,
+        'admission_number': customer.admission_number,
         'id': customer.pk,
         'gender': customer.get_gender_display(),
         'age': age,
@@ -348,8 +364,7 @@ def edit_customer(request, customer_id):
             errors.append("Name is required.")
         if not gender:
             errors.append("Gender is required.")
-        if not dob:
-            errors.append("Date of birth is required.")
+    
 
         # If there are any validation errors, return to the form with errors
         if errors:

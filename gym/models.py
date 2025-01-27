@@ -51,11 +51,6 @@ class Customer(models.Model):
         ('A2B-', 'A2B-'),
         ('BOMBAY', 'BOMBAY'),
     ]
-
-
-
-
-
     unique_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255,blank=False)
     phone_no = models.CharField(max_length=13, blank=True)
